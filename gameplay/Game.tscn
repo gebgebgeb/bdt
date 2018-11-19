@@ -1,0 +1,102 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://gameplay/Game.gd" type="Script" id=1]
+[ext_resource path="res://gameplay/Player.tscn" type="PackedScene" id=2]
+[ext_resource path="res://gameplay/Stage.tscn" type="PackedScene" id=3]
+[ext_resource path="res://cover.png" type="Texture" id=4]
+[ext_resource path="res://gameplay/StatTracker.tscn" type="PackedScene" id=5]
+[ext_resource path="res://gameplay/PauseMenu.tscn" type="PackedScene" id=6]
+
+[sub_resource type="RectangleShape2D" id=1]
+
+custom_solver_bias = 0.0
+extents = Vector2( 10, 10 )
+
+[node name="Game" type="Node2D" index="0" groups=[
+"bullets",
+]]
+
+script = ExtResource( 1 )
+_sections_unfolded = [ "Pause", "Z Index" ]
+
+[node name="PlayArea" type="Area2D" parent="." index="0"]
+
+input_pickable = true
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
+audio_bus_override = false
+audio_bus_name = "Master"
+_sections_unfolded = [ "Z Index" ]
+
+[node name="PlayAreaHitbox" type="CollisionShape2D" parent="PlayArea" index="0"]
+
+position = Vector2( 30, 30 )
+shape = SubResource( 1 )
+_sections_unfolded = [ "Transform" ]
+
+[node name="PlayAreaBG" type="ColorRect" parent="PlayArea" index="1"]
+
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 40.0
+margin_bottom = 40.0
+rect_pivot_offset = Vector2( 0, 0 )
+rect_clip_content = false
+mouse_filter = 0
+mouse_default_cursor_shape = 0
+size_flags_horizontal = 1
+size_flags_vertical = 1
+color = Color( 0.34375, 0.34375, 0.34375, 1 )
+_sections_unfolded = [ "Material", "Visibility" ]
+
+[node name="Player" parent="." index="1" instance=ExtResource( 2 )]
+
+z_index = 1
+_sections_unfolded = [ "Transform", "Visibility", "Z Index" ]
+
+[node name="Stage" parent="." index="2" instance=ExtResource( 3 )]
+
+[node name="Cover" type="Sprite" parent="." index="3"]
+
+z_index = 2
+texture = ExtResource( 4 )
+centered = false
+_sections_unfolded = [ "Offset", "Z Index" ]
+
+[node name="StatTracker" parent="." index="4" instance=ExtResource( 5 )]
+
+position = Vector2( 819.22, 445.438 )
+scale = Vector2( 1.21186, 1.42381 )
+z_index = 3
+_sections_unfolded = [ "Anchor", "Focus", "Material", "Mouse", "Size Flags", "Theme", "Visibility", "Z Index", "custom_constants" ]
+
+[node name="PauseMenu" parent="." index="5" instance=ExtResource( 6 )]
+
+pause_mode = 2
+visible = false
+z_index = 5
+_sections_unfolded = [ "Pause", "Visibility", "Z Index" ]
+
+[connection signal="hit" from="Player" to="Stage" method="_on_Player_hit"]
+
+[connection signal="hit" from="Player" to="StatTracker" method="_on_Player_hit"]
+
+[connection signal="hit" from="Player" to="." method="_on_Player_hit"]
+
+[connection signal="paused" from="Player" to="." method="_on_Player_paused"]
+
+[connection signal="respawned" from="Player" to="Stage" method="_on_Player_respawned"]
+
+[connection signal="respawned" from="Player" to="StatTracker" method="_on_Player_respawned"]
+
+[connection signal="done_saving" from="StatTracker" to="PauseMenu" method="_on_StatTracker_done_saving"]
+
+[connection signal="quitting" from="PauseMenu" to="StatTracker" method="_on_PauseMenu_quitting"]
+
+[connection signal="unpausing" from="PauseMenu" to="." method="_on_PauseMenu_unpausing"]
+
+
